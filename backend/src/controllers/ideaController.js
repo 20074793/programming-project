@@ -3,9 +3,18 @@ const Idea = require("../models/Idea");
 // Create idea
 exports.createIdea = async (req, res) => {
   try {
-    const { title, description, department, submittedBy, allowAnonymous } =
-      req.body;
+    const { title, description, department, submittedBy, allowAnonymous } = req.body;
 
+    // basic validation
+    if (!title || !description) {
+      return res.status(400).json({ message: "Title and description are required." });
+    }
+
+    if (!allowAnonymous && !submittedBy) {
+      return res.status(400).json({ message: "Please enter your name or choose anonymous." });
+    }
+
+    // create idea
     const idea = await Idea.create({
       title,
       description,
@@ -15,9 +24,10 @@ exports.createIdea = async (req, res) => {
     });
 
     res.status(201).json(idea);
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error creating idea" });
+    console.error("Create idea error:", err);
+    res.status(500).json({ message: "Could not create idea" });
   }
 };
 
