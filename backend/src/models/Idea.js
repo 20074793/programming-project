@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 
 const ideaSchema = new mongoose.Schema(
-  {
+   {
     title: {
       type: String,
       required: true,
-      trim: true,
     },
     description: {
       type: String,
@@ -28,8 +27,8 @@ const ideaSchema = new mongoose.Schema(
       default: "submitted",
     },
     submittedBy: {
-      type: String, // later we can change this to userId when we add auth
-      required: true,
+      type: String,
+      required: true, // later can be changed to userId
     },
     allowAnonymous: {
       type: Boolean,

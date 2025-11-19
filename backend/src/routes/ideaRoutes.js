@@ -1,12 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const ideaController = require("../controllers/ideaController");
+
+const {
+  createIdea,
+  getIdeas,
+  getIdeaById,
+  updateIdea,
+  deleteIdea,
+  updateStatus
+} = require("/controllers/ideaController");
 
 // /api/ideas
-router.post("/", ideaController.createIdea);      // create idea
-router.get("/", ideaController.getIdeas);        // list all ideas
-router.get("/:id", ideaController.getIdeaById);  // get one idea
-router.put("/:id", ideaController.updateIdea);   // update idea
-router.delete("/:id", ideaController.deleteIdea);// delete idea
+router.post("/", createIdea);            // create idea
+router.get("/", getIdeas);               // list all ideas
+router.get("/:id", getIdeaById);         // get one idea
+router.put("/:id", updateIdea);          // update idea
+router.delete("/:id", deleteIdea);       // delete idea
+router.patch("/:id/status", updateStatus); // update status
 
 module.exports = router;

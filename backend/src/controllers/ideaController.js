@@ -87,3 +87,25 @@ exports.deleteIdea = async (req, res) => {
     res.status(500).json({ message: "Error deleting idea" });
   }
 };
+// Update idea status
+exports.updateStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const updatedIdea = await Idea.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedIdea) {
+      return res.status(404).json({ message: "Idea not found" });
+    }
+
+    res.json(updatedIdea);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating status" });
+  }
+};
+
