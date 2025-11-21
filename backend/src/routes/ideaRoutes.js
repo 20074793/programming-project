@@ -8,7 +8,8 @@ const {
   updateIdea,
   deleteIdea,
   updateStatus
-} = require("/controllers/ideaController");
+} = require("../controllers/ideaController.js");
+
 
 // /api/ideas
 router.post("/", createIdea);            // create idea
