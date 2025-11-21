@@ -23,3 +23,9 @@ export const deleteIdea = async (id) => {
   const res = await axios.delete(`/api/ideas/${id}`);
   return res.data;
 };
+
+// Update idea status
+export const updateIdeaStatus = async (id, status) => {
+  const res = await axios.patch(`/api/ideas/${id}/status`, { status });
+  return res.data;
+};
