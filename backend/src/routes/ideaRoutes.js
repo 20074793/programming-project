@@ -9,6 +9,8 @@ const {
   deleteIdea,
   updateStatus,
   likeIdea,
+  addComment,
+
 } = require("../controllers/ideaController.js");
 
 
