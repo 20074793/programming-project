@@ -107,5 +107,28 @@ exports.updateStatus = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Error updating status" });
   }
+
 };
+// Increment likes count for an idea
+exports.likeIdea = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const idea = await Idea.findByIdAndUpdate(
+      id,
+      { $inc: { likes: 1 } },
+      { new: true }
+    );
+
+    if (!idea) {
+      return res.status(404).json({ message: "Idea not found" });
+    }
+
+    res.json(idea);
+  } catch (err) {
+    console.error("Error liking idea:", err);
+    res.status(500).json({ message: "Error liking idea" });
+  }
+};
+
 

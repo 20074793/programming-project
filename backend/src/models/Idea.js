@@ -37,7 +37,7 @@ const ideaSchema = new mongoose.Schema(
 
     likes: {
       type: Number,
-      default: 0,
+      default: 0,     // Number of upvotes an idea has received
     },
 
   },
