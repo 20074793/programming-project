@@ -91,7 +91,10 @@ function IdeaList({ refreshToken }) {
           <p style={styles.meta}>
                Likes: <strong>{idea.likes ?? 0}</strong>
           </p>
-
+          <p style={styles.meta}>
+              Comments:{" "}
+              <strong>{Array.isArray(idea.comments) ? idea.comments.length : 0}</strong>
+              </p>
           <div style={styles.statusRow}>
             <span style={styles.meta}>
               Status: <strong>{idea.status}</strong>
@@ -118,6 +121,14 @@ function IdeaList({ refreshToken }) {
           >
             Delete
           </button>
+
+          <button
+            onClick={() => handleLike(idea._id)}
+            style={styles.like}
+          >
+  👍 Like
+</button>
+
         </div>
       ))}
     </div>
@@ -168,6 +179,17 @@ const styles = {
     textAlign: "center",
     marginTop: 20,
   },
+    like: {
+    marginTop: 8,
+    padding: "6px 10px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#2563eb",
+    color: "white",
+    cursor: "pointer",
+    marginRight: 8,
+  },
+
 };
 
 export default IdeaList;
