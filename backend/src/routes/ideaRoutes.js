@@ -22,4 +22,6 @@ router.put("/:id", updateIdea);          // update idea
 router.delete("/:id", deleteIdea);       // delete idea
 router.patch("/:id/status", updateStatus); // update status
 router.post("/:id/like", likeIdea); // like idea 
+router.post("/:id/comments", addComment);    // add comment to idea 
+
 module.exports = router;
