@@ -7,7 +7,8 @@ const {
   getIdeaById,
   updateIdea,
   deleteIdea,
-  updateStatus
+  updateStatus,
+  likeIdea,
 } = require("../controllers/ideaController.js");
 
 
