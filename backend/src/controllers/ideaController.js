@@ -131,4 +131,34 @@ exports.likeIdea = async (req, res) => {
   }
 };
 
+// Add a new comment to an idea
+exports.addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { author, text } = req.body;
+
+    if (!text || text.trim() === "") {
+      return res.status(400).json({ message: "Comment text is required" });
+    }
+
+    const idea = await Idea.findById(id);
+    if (!idea) {
+      return res.status(404).json({ message: "Idea not found" });
+    }
+
+    idea.comments.push({
+      author: author && author.trim() !== "" ? author : "Anonymous",
+      text,
+    });
+
+    await idea.save();
+
+    res.status(201).json(idea);
+  } catch (err) {
+    console.error("Error adding comment:", err);
+    res.status(500).json({ message: "Error adding comment" });
+  }
+};
+
+
 
