@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getIdeas, deleteIdea } from "./api";
+import { getIdeas, deleteIdea, updateIdeaStatus } from "./api";
 
 function IdeaList({ refreshToken }) {
   const [ideas, setIdeas] = useState([]);
@@ -18,6 +18,15 @@ function IdeaList({ refreshToken }) {
       setLoading(false);
     }
   };
+
+const STATUS_OPTIONS = [
+  "submitted",
+  "in_review",
+  "approved",
+  "in_progress",
+  "implemented",
+  "rejected",
+];
 
   useEffect(() => {
     loadIdeas();
