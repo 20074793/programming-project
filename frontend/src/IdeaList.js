@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getIdeas, deleteIdea, updateIdeaStatus } from "./api";
+import { getIdeas, deleteIdea, updateIdeaStatus, likeIdea } from "./api";
 
 // All allowed status values
 const STATUS_OPTIONS = [
@@ -55,6 +55,17 @@ function IdeaList({ refreshToken }) {
       alert("Failed to update status.");
     }
   };
+  const handleLike = async (id) => {
+  try {
+    const updated = await likeIdea(id);
+    setIdeas((prev) =>
+      prev.map((idea) => (idea._id === id ? updated : idea))
+    );
+  } catch (err) {
+    console.error(err);
+    alert("Failed to like idea.");
+  }
+};
 
   if (loading) return <p style={styles.center}>Loading ideas...</p>;
   if (error) return <p style={styles.center}>{error}</p>;
