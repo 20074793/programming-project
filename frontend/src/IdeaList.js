@@ -77,6 +77,9 @@ function IdeaList({ refreshToken }) {
               {idea.allowAnonymous ? "Anonymous" : idea.submittedBy}
             </strong>
           </p>
+          <p style={styles.meta}>
+               Likes: <strong>{idea.likes ?? 0}</strong>
+          </p>
 
           <div style={styles.statusRow}>
             <span style={styles.meta}>
