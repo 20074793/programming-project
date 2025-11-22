@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getIdeas, deleteIdea, updateIdeaStatus } from "./api";
 
+// All allowed status values
+const STATUS_OPTIONS = [
+  "submitted",
+  "in_review",
+  "approved",
+  "in_progress",
+  "implemented",
+  "rejected",
+];
+
 function IdeaList({ refreshToken }) {
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,15 +29,6 @@ function IdeaList({ refreshToken }) {
     }
   };
 
-const STATUS_OPTIONS = [
-  "submitted",
-  "in_review",
-  "approved",
-  "in_progress",
-  "implemented",
-  "rejected",
-];
-
   useEffect(() => {
     loadIdeas();
   }, [refreshToken]); // reload when parent changes refreshToken
@@ -43,6 +44,18 @@ const STATUS_OPTIONS = [
     }
   };
 
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const updated = await updateIdeaStatus(id, newStatus);
+      setIdeas((prev) =>
+        prev.map((idea) => (idea._id === id ? updated : idea))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update status.");
+    }
+  };
+
   if (loading) return <p style={styles.center}>Loading ideas...</p>;
   if (error) return <p style={styles.center}>{error}</p>;
   if (ideas.length === 0) return <p style={styles.center}>No ideas yet.</p>;
@@ -53,19 +66,42 @@ const STATUS_OPTIONS = [
         <div key={idea._id} style={styles.card}>
           <h3>{idea.title}</h3>
           <p>{idea.description}</p>
+
           <p style={styles.meta}>
             Department: <strong>{idea.department}</strong>
           </p>
+
           <p style={styles.meta}>
             Submitted by:{" "}
             <strong>
               {idea.allowAnonymous ? "Anonymous" : idea.submittedBy}
             </strong>
           </p>
-          <p style={styles.meta}>
-            Status: <strong>{idea.status}</strong>
-          </p>
-          <button onClick={() => handleDelete(idea._id)} style={styles.delete}>
+
+          <div style={styles.statusRow}>
+            <span style={styles.meta}>
+              Status: <strong>{idea.status}</strong>
+            </span>
+
+            <select
+              value={idea.status}
+              onChange={(e) =>
+                handleStatusChange(idea._id, e.target.value)
+              }
+              style={styles.select}
+            >
+              {STATUS_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={() => handleDelete(idea._id)}
+            style={styles.delete}
+          >
             Delete
           </button>
         </div>
@@ -91,6 +127,19 @@ const styles = {
   meta: {
     fontSize: 14,
     color: "#555",
+  },
+  statusRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 8,
+    gap: 8,
+  },
+  select: {
+    padding: 4,
+    borderRadius: 4,
+    border: "1px solid #ccc",
+    fontSize: 14,
   },
   delete: {
     marginTop: 8,
