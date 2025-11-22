@@ -29,3 +29,9 @@ export const updateIdeaStatus = async (id, status) => {
   const res = await axios.patch(`/api/ideas/${id}/status`, { status });
   return res.data;
 };
+
+// like idea 
+export const likeIdea = async (id) => {
+  const res = await axios.post(`/api/ideas/${id}/like`);
+  return res.data;
+};
