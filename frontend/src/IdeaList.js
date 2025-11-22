@@ -122,6 +122,46 @@ function IdeaList({ refreshToken }) {
               ))}
             </div>
           )}
+          <div style={styles.commentForm}>
+  <input
+    type="text"
+    placeholder="Your name (optional)"
+    value={idea.newAuthor || ""}
+    onChange={(e) => {
+      const author = e.target.value;
+      setIdeas((prev) =>
+        prev.map((i) =>
+          i._id === idea._id ? { ...i, newAuthor: author } : i
+        )
+      );
+    }}
+    style={styles.commentInput}
+  />
+
+  <textarea
+    placeholder="Write a comment..."
+    value={idea.newComment || ""}
+    onChange={(e) => {
+      const text = e.target.value;
+      setIdeas((prev) =>
+        prev.map((i) =>
+          i._id === idea._id ? { ...i, newComment: text } : i
+        )
+      );
+    }}
+    style={styles.commentTextarea}
+  />
+
+  <button
+    style={styles.commentButton}
+    onClick={() =>
+      alert("Comment submission will be added in next commit!")
+    }
+  >
+    Add Comment
+  </button>
+</div>
+         
 
           <div style={styles.statusRow}>
             <span style={styles.meta}>
@@ -242,6 +282,39 @@ const styles = {
     color: "#777",
     marginTop: 4,
   },
+
+  commentForm: {
+  marginTop: 10,
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+},
+
+commentInput: {
+  padding: 6,
+  borderRadius: 4,
+  border: "1px solid #ccc",
+  fontSize: 14,
+},
+
+commentTextarea: {
+  padding: 6,
+  minHeight: 60,
+  borderRadius: 4,
+  border: "1px solid #ccc",
+  fontSize: 14,
+},
+
+commentButton: {
+  padding: "6px 10px",
+  borderRadius: 4,
+  backgroundColor: "#059669",
+  color: "white",
+  border: "none",
+  cursor: "pointer",
+  alignSelf: "flex-start",
+},
+
 };
 
 export default IdeaList;
