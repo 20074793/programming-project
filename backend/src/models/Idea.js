@@ -40,6 +40,24 @@ const ideaSchema = new mongoose.Schema(
       default: 0,     // Number of upvotes an idea has received
     },
 
+    // Simple embedded comments for each idea
+    comments: [
+      {
+        author: {
+          type: String,
+          default: "Anonymous",
+        },
+        text: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+
   },
   { timestamps: true }
 );
