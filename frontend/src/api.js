@@ -35,3 +35,9 @@ export const likeIdea = async (id) => {
   const res = await axios.post(`/api/ideas/${id}/like`);
   return res.data;
 };
+
+// add comment to idea 
+export const addComment = async (id, commentData) => {
+  const res = await axios.post(`/api/ideas/${id}/comments`, commentData);
+  return res.data;
+};
