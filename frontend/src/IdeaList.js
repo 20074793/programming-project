@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getIdeas, deleteIdea, updateIdeaStatus, likeIdea } from "./api";
+import {
+  getIdeas,
+  deleteIdea,
+  updateIdeaStatus,
+  likeIdea,
+  addComment,
+} from "./api";
 
-// All allowed status values
+// Status options for dropdown
 const STATUS_OPTIONS = [
   "submitted",
   "in_review",
@@ -16,6 +22,10 @@ function IdeaList({ refreshToken }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    loadIdeas();
+  }, [refreshToken]);
+
   const loadIdeas = async () => {
     try {
       setLoading(true);
@@ -28,10 +38,6 @@ function IdeaList({ refreshToken }) {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadIdeas();
-  }, [refreshToken]); // reload when parent changes refreshToken
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this idea?")) return;
@@ -55,17 +61,18 @@ function IdeaList({ refreshToken }) {
       alert("Failed to update status.");
     }
   };
+
   const handleLike = async (id) => {
-  try {
-    const updated = await likeIdea(id);
-    setIdeas((prev) =>
-      prev.map((idea) => (idea._id === id ? updated : idea))
-    );
-  } catch (err) {
-    console.error(err);
-    alert("Failed to like idea.");
-  }
-};
+    try {
+      const updated = await likeIdea(id);
+      setIdeas((prev) =>
+        prev.map((idea) => (idea._id === id ? updated : idea))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to like idea.");
+    }
+  };
 
   if (loading) return <p style={styles.center}>Loading ideas...</p>;
   if (error) return <p style={styles.center}>{error}</p>;
@@ -88,13 +95,34 @@ function IdeaList({ refreshToken }) {
               {idea.allowAnonymous ? "Anonymous" : idea.submittedBy}
             </strong>
           </p>
+
           <p style={styles.meta}>
-               Likes: <strong>{idea.likes ?? 0}</strong>
+            Likes: <strong>{idea.likes ?? 0}</strong>
           </p>
+
           <p style={styles.meta}>
-              Comments:{" "}
-              <strong>{Array.isArray(idea.comments) ? idea.comments.length : 0}</strong>
-              </p>
+            Comments:{" "}
+            <strong>
+              {Array.isArray(idea.comments) ? idea.comments.length : 0}
+            </strong>
+          </p>
+
+          {idea.comments && idea.comments.length > 0 && (
+            <div style={styles.commentsBox}>
+              {idea.comments.map((comment, index) => (
+                <div key={index} style={styles.commentItem}>
+                  <p style={styles.commentAuthor}>
+                    {comment.author || "Anonymous"}:
+                  </p>
+                  <p style={styles.commentText}>{comment.text}</p>
+                  <p style={styles.commentDate}>
+                    {new Date(comment.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div style={styles.statusRow}>
             <span style={styles.meta}>
               Status: <strong>{idea.status}</strong>
@@ -116,19 +144,18 @@ function IdeaList({ refreshToken }) {
           </div>
 
           <button
+            onClick={() => handleLike(idea._id)}
+            style={styles.like}
+          >
+            👍 Like
+          </button>
+
+          <button
             onClick={() => handleDelete(idea._id)}
             style={styles.delete}
           >
             Delete
           </button>
-
-          <button
-            onClick={() => handleLike(idea._id)}
-            style={styles.like}
-          >
-  👍 Like
-</button>
-
         </div>
       ))}
     </div>
@@ -166,6 +193,16 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: 14,
   },
+  like: {
+    marginTop: 8,
+    padding: "6px 10px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#2563eb",
+    color: "white",
+    cursor: "pointer",
+    marginRight: 8,
+  },
   delete: {
     marginTop: 8,
     padding: "6px 10px",
@@ -179,17 +216,32 @@ const styles = {
     textAlign: "center",
     marginTop: 20,
   },
-    like: {
-    marginTop: 8,
-    padding: "6px 10px",
-    borderRadius: 4,
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-    marginRight: 8,
+  commentsBox: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#f9fafb",
+    borderRadius: 6,
+    border: "1px solid #eee",
   },
-
+  commentItem: {
+    marginBottom: 8,
+    paddingBottom: 8,
+    borderBottom: "1px solid #ddd",
+  },
+  commentAuthor: {
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  commentText: {
+    fontSize: 14,
+    color: "#333",
+    marginTop: 2,
+  },
+  commentDate: {
+    fontSize: 12,
+    color: "#777",
+    marginTop: 4,
+  },
 };
 
 export default IdeaList;
