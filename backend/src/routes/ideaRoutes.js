@@ -19,5 +19,5 @@ router.get("/:id", getIdeaById);         // get one idea
 router.put("/:id", updateIdea);          // update idea
 router.delete("/:id", deleteIdea);       // delete idea
 router.patch("/:id/status", updateStatus); // update status
-
+router.post("/:id/like", likeIdea); // like idea 
 module.exports = router;
