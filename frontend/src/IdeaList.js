@@ -4,10 +4,10 @@ import {
   deleteIdea,
   updateIdeaStatus,
   likeIdea,
-  addComment,
+  addComment, // 👈 make sure this exists in api.js
 } from "./api";
 
-// Status options for dropdown
+// All allowed status values
 const STATUS_OPTIONS = [
   "submitted",
   "in_review",
@@ -21,10 +21,7 @@ function IdeaList({ refreshToken }) {
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    loadIdeas();
-  }, [refreshToken]);
+  const [commentInputs, setCommentInputs] = useState({}); // { ideaId: "text" }
 
   const loadIdeas = async () => {
     try {
@@ -38,6 +35,10 @@ function IdeaList({ refreshToken }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadIdeas();
+  }, [refreshToken]); // reload when parent changes refreshToken
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this idea?")) return;
@@ -74,6 +75,37 @@ function IdeaList({ refreshToken }) {
     }
   };
 
+  const handleCommentChange = (id, value) => {
+    setCommentInputs((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleAddComment = async (id) => {
+    const text = (commentInputs[id] || "").trim();
+    if (!text) {
+      alert("Please enter a comment before submitting.");
+      return;
+    }
+
+    try {
+      // backend will add createdAt, maybe author later
+      const updated = await addComment(id, { text });
+      setIdeas((prev) =>
+        prev.map((idea) => (idea._id === id ? updated : idea))
+      );
+      // clear input
+      setCommentInputs((prev) => ({
+        ...prev,
+        [id]: "",
+      }));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add comment.");
+    }
+  };
+
   if (loading) return <p style={styles.center}>Loading ideas...</p>;
   if (error) return <p style={styles.center}>{error}</p>;
   if (ideas.length === 0) return <p style={styles.center}>No ideas yet.</p>;
@@ -107,6 +139,7 @@ function IdeaList({ refreshToken }) {
             </strong>
           </p>
 
+          {/* Existing comments list */}
           {idea.comments && idea.comments.length > 0 && (
             <div style={styles.commentsBox}>
               {idea.comments.map((comment, index) => (
@@ -116,53 +149,16 @@ function IdeaList({ refreshToken }) {
                   </p>
                   <p style={styles.commentText}>{comment.text}</p>
                   <p style={styles.commentDate}>
-                    {new Date(comment.createdAt).toLocaleString()}
+                    {comment.createdAt
+                      ? new Date(comment.createdAt).toLocaleString()
+                      : ""}
                   </p>
                 </div>
               ))}
             </div>
           )}
-          <div style={styles.commentForm}>
-  <input
-    type="text"
-    placeholder="Your name (optional)"
-    value={idea.newAuthor || ""}
-    onChange={(e) => {
-      const author = e.target.value;
-      setIdeas((prev) =>
-        prev.map((i) =>
-          i._id === idea._id ? { ...i, newAuthor: author } : i
-        )
-      );
-    }}
-    style={styles.commentInput}
-  />
 
-  <textarea
-    placeholder="Write a comment..."
-    value={idea.newComment || ""}
-    onChange={(e) => {
-      const text = e.target.value;
-      setIdeas((prev) =>
-        prev.map((i) =>
-          i._id === idea._id ? { ...i, newComment: text } : i
-        )
-      );
-    }}
-    style={styles.commentTextarea}
-  />
-
-  <button
-    style={styles.commentButton}
-    onClick={() =>
-      alert("Comment submission will be added in next commit!")
-    }
-  >
-    Add Comment
-  </button>
-</div>
-         
-
+          {/* Status dropdown */}
           <div style={styles.statusRow}>
             <span style={styles.meta}>
               Status: <strong>{idea.status}</strong>
@@ -170,9 +166,7 @@ function IdeaList({ refreshToken }) {
 
             <select
               value={idea.status}
-              onChange={(e) =>
-                handleStatusChange(idea._id, e.target.value)
-              }
+              onChange={(e) => handleStatusChange(idea._id, e.target.value)}
               style={styles.select}
             >
               {STATUS_OPTIONS.map((s) => (
@@ -183,19 +177,41 @@ function IdeaList({ refreshToken }) {
             </select>
           </div>
 
-          <button
-            onClick={() => handleLike(idea._id)}
-            style={styles.like}
-          >
-            👍 Like
-          </button>
+          {/* Comment input */}
+          <div style={styles.commentForm}>
+            <input
+              type="text"
+              placeholder="Add a comment…"
+              value={commentInputs[idea._id] || ""}
+              onChange={(e) =>
+                handleCommentChange(idea._id, e.target.value)
+              }
+              style={styles.commentInput}
+            />
+            <button
+              onClick={() => handleAddComment(idea._id)}
+              style={styles.commentButton}
+            >
+              Comment
+            </button>
+          </div>
 
-          <button
-            onClick={() => handleDelete(idea._id)}
-            style={styles.delete}
-          >
-            Delete
-          </button>
+          {/* Action buttons */}
+          <div style={styles.actionsRow}>
+            <button
+              onClick={() => handleLike(idea._id)}
+              style={styles.like}
+            >
+              👍 Like
+            </button>
+
+            <button
+              onClick={() => handleDelete(idea._id)}
+              style={styles.delete}
+            >
+              Delete
+            </button>
+          </div>
         </div>
       ))}
     </div>
@@ -233,22 +249,24 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: 14,
   },
-  like: {
+  actionsRow: {
+    display: "flex",
+    gap: 8,
     marginTop: 8,
-    padding: "6px 10px",
-    borderRadius: 4,
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-    marginRight: 8,
   },
   delete: {
-    marginTop: 8,
     padding: "6px 10px",
     borderRadius: 4,
     border: "none",
     backgroundColor: "#dc2626",
+    color: "white",
+    cursor: "pointer",
+  },
+  like: {
+    padding: "6px 10px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#2563eb",
     color: "white",
     cursor: "pointer",
   },
@@ -282,39 +300,26 @@ const styles = {
     color: "#777",
     marginTop: 4,
   },
-
   commentForm: {
-  marginTop: 10,
-  display: "flex",
-  flexDirection: "column",
-  gap: 8,
-},
-
-commentInput: {
-  padding: 6,
-  borderRadius: 4,
-  border: "1px solid #ccc",
-  fontSize: 14,
-},
-
-commentTextarea: {
-  padding: 6,
-  minHeight: 60,
-  borderRadius: 4,
-  border: "1px solid #ccc",
-  fontSize: 14,
-},
-
-commentButton: {
-  padding: "6px 10px",
-  borderRadius: 4,
-  backgroundColor: "#059669",
-  color: "white",
-  border: "none",
-  cursor: "pointer",
-  alignSelf: "flex-start",
-},
-
+    display: "flex",
+    gap: 8,
+    marginTop: 10,
+  },
+  commentInput: {
+    flex: 1,
+    padding: 6,
+    borderRadius: 4,
+    border: "1px solid #ccc",
+    fontSize: 14,
+  },
+  commentButton: {
+    padding: "6px 12px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#16a34a",
+    color: "white",
+    cursor: "pointer",
+  },
 };
 
 export default IdeaList;
