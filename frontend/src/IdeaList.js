@@ -23,6 +23,8 @@ function IdeaList({ refreshToken }) {
   const [sortOption, setSortOption] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterDepartment, setFilterDepartment] = useState("all");
+
 
 
 
@@ -97,8 +99,18 @@ function IdeaList({ refreshToken }) {
 
   // SORT LOGIC
 
-  // Filter ideas based on search term
+   // Filter ideas based on search term and status
+
+   const departmentOptions = Array.from(
+    new Set(ideas.map((idea) => idea.department).filter(Boolean))
+  );
   const filteredIdeas = ideas.filter((idea) => {
+    // Status filter
+    if (filterStatus !== "all" && idea.status !== filterStatus) {
+      return false;
+    }
+
+    // Search filter
     if (!searchTerm.trim()) return true;
 
     const term = searchTerm.toLowerCase();
@@ -110,6 +122,7 @@ function IdeaList({ refreshToken }) {
       (idea.submittedBy || "").toLowerCase().includes(term)
     );
   });
+
 
   // Then sort the filtered ideas
   const sortedIdeas = [...filteredIdeas].sort((a, b) => {
@@ -161,6 +174,29 @@ function IdeaList({ refreshToken }) {
           style={styles.searchInput}
         />
 
+      <div style={styles.toolbar}>
+        <input
+          type="text"
+          placeholder="Search ideas..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={styles.searchInput}
+        />
+
+        <span style={styles.meta}>Department:</span>
+        <select
+          value={filterDepartment}
+          onChange={(e) => setFilterDepartment(e.target.value)}
+          style={styles.select}
+        >
+          <option value="all">All</option>
+          {departmentOptions.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
+        </select>
+
         <span style={styles.meta}>Status:</span>
         <select
           value={filterStatus}
@@ -176,6 +212,16 @@ function IdeaList({ refreshToken }) {
         </select>
 
         <span style={styles.meta}>Sort by:</span>
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          style={styles.select}
+        >
+          <option value="newest">Newest first</option>
+          <option value="likes">Most liked</option>
+        </select>
+      </div>
+
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
