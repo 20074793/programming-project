@@ -94,10 +94,29 @@ function IdeaList({ refreshToken }) {
   }, {});
 
   // SORT LOGIC
-  const sortedIdeas = [...ideas].sort((a, b) => {
+  
+  // Filter ideas based on search term
+  const filteredIdeas = ideas.filter((idea) => {
+    if (!searchTerm.trim()) return true;
+
+    const term = searchTerm.toLowerCase();
+
+    return (
+      idea.title.toLowerCase().includes(term) ||
+      idea.description.toLowerCase().includes(term) ||
+      (idea.department || "").toLowerCase().includes(term) ||
+      (idea.submittedBy || "").toLowerCase().includes(term)
+    );
+  });
+
+  // Then sort the filtered ideas
+  const sortedIdeas = [...filteredIdeas].sort((a, b) => {
     if (sortOption === "likes") {
       return (b.likes || 0) - (a.likes || 0);
     }
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
     // newest first
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
