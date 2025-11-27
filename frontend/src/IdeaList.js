@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  getIdeas,
-  deleteIdea,
-  updateIdeaStatus,
-  likeIdea,
-  addComment, // 👈 make sure this exists in api.js
+import { 
+  getIdeas, 
+  deleteIdea, 
+  updateIdeaStatus, 
+  likeIdea 
 } from "./api";
 
-// All allowed status values
+// Status dropdown options
 const STATUS_OPTIONS = [
   "submitted",
   "in_review",
@@ -21,8 +20,9 @@ function IdeaList({ refreshToken }) {
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [commentInputs, setCommentInputs] = useState({}); // { ideaId: "text" }
+  const [sortOption, setSortOption] = useState("newest");
 
+  // Load ideas
   const loadIdeas = async () => {
     try {
       setLoading(true);
@@ -38,8 +38,9 @@ function IdeaList({ refreshToken }) {
 
   useEffect(() => {
     loadIdeas();
-  }, [refreshToken]); // reload when parent changes refreshToken
+  }, [refreshToken]);
 
+  // Delete idea
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this idea?")) return;
     try {
@@ -51,6 +52,7 @@ function IdeaList({ refreshToken }) {
     }
   };
 
+  // Status change
   const handleStatusChange = async (id, newStatus) => {
     try {
       const updated = await updateIdeaStatus(id, newStatus);
@@ -63,6 +65,7 @@ function IdeaList({ refreshToken }) {
     }
   };
 
+  // Likes
   const handleLike = async (id) => {
     try {
       const updated = await likeIdea(id);
@@ -75,135 +78,100 @@ function IdeaList({ refreshToken }) {
     }
   };
 
-  const handleCommentChange = (id, value) => {
-    setCommentInputs((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
-
-  const handleAddComment = async (id) => {
-    const text = (commentInputs[id] || "").trim();
-    if (!text) {
-      alert("Please enter a comment before submitting.");
-      return;
+  // SORT LOGIC
+  const sortedIdeas = [...ideas].sort((a, b) => {
+    if (sortOption === "likes") {
+      return (b.likes || 0) - (a.likes || 0);
     }
-
-    try {
-      // backend will add createdAt, maybe author later
-      const updated = await addComment(id, { text });
-      setIdeas((prev) =>
-        prev.map((idea) => (idea._id === id ? updated : idea))
-      );
-      // clear input
-      setCommentInputs((prev) => ({
-        ...prev,
-        [id]: "",
-      }));
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add comment.");
-    }
-  };
+    // newest first
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
   if (loading) return <p style={styles.center}>Loading ideas...</p>;
   if (error) return <p style={styles.center}>{error}</p>;
   if (ideas.length === 0) return <p style={styles.center}>No ideas yet.</p>;
 
   return (
-    <div style={styles.list}>
-      {ideas.map((idea) => (
-        <div key={idea._id} style={styles.card}>
-          <h3>{idea.title}</h3>
-          <p>{idea.description}</p>
+    <div>
 
-          <p style={styles.meta}>
-            Department: <strong>{idea.department}</strong>
-          </p>
+      {/* SORT BAR */}
+      <div style={styles.toolbar}>
+        <span style={styles.meta}>Sort by: </span>
 
-          <p style={styles.meta}>
-            Submitted by:{" "}
-            <strong>
-              {idea.allowAnonymous ? "Anonymous" : idea.submittedBy}
-            </strong>
-          </p>
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          style={styles.select}
+        >
+          <option value="newest">Newest first</option>
+          <option value="likes">Most liked</option>
+        </select>
+      </div>
 
-          <p style={styles.meta}>
-            Likes: <strong>{idea.likes ?? 0}</strong>
-          </p>
+      {/* IDEA LIST */}
+      <div style={styles.list}>
+        {sortedIdeas.map((idea) => (
+          <div key={idea._id} style={styles.card}>
+            <h3>{idea.title}</h3>
+            <p>{idea.description}</p>
 
-          <p style={styles.meta}>
-            Comments:{" "}
-            <strong>
-              {Array.isArray(idea.comments) ? idea.comments.length : 0}
-            </strong>
-          </p>
+            <p style={styles.meta}>
+              Department: <strong>{idea.department}</strong>
+            </p>
 
-          {/* Existing comments list */}
-          {idea.comments && idea.comments.length > 0 && (
-            <div style={styles.commentsBox}>
-              {idea.comments.map((comment, index) => (
-                <div key={index} style={styles.commentItem}>
-                  <p style={styles.commentAuthor}>
-                    {comment.author || "Anonymous"}:
-                  </p>
-                  <p style={styles.commentText}>{comment.text}</p>
-                  <p style={styles.commentDate}>
-                    {comment.createdAt
-                      ? new Date(comment.createdAt).toLocaleString()
-                      : ""}
-                  </p>
-                </div>
-              ))}
+            <p style={styles.meta}>
+              Submitted by:{" "}
+              <strong>
+                {idea.allowAnonymous ? "Anonymous" : idea.submittedBy}
+              </strong>
+            </p>
+
+            <p style={styles.meta}>
+              Likes: <strong>{idea.likes ?? 0}</strong>
+            </p>
+
+            <p style={styles.meta}>
+              Comments:{" "}
+              <strong>
+                {Array.isArray(idea.comments) ? idea.comments.length : 0}
+              </strong>
+            </p>
+
+            {/* COMMENTS DISPLAY */}
+            {idea.comments && idea.comments.length > 0 && (
+              <div style={styles.commentsBox}>
+                {idea.comments.map((comment, index) => (
+                  <div key={index} style={styles.commentItem}>
+                    <p style={styles.commentAuthor}>
+                      {comment.author || "Anonymous"}:
+                    </p>
+                    <p style={styles.commentText}>{comment.text}</p>
+                    <p style={styles.commentDate}>
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* STATUS + ACTIONS */}
+            <div style={styles.statusRow}>
+              <span style={styles.meta}>
+                Status: <strong>{idea.status}</strong>
+              </span>
+
+              <select
+                value={idea.status}
+                onChange={(e) => handleStatusChange(idea._id, e.target.value)}
+                style={styles.select}
+              >
+                {STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-
-          {/* Status dropdown */}
-          <div style={styles.statusRow}>
-            <span style={styles.meta}>
-              Status: <strong>{idea.status}</strong>
-            </span>
-
-            <select
-              value={idea.status}
-              onChange={(e) => handleStatusChange(idea._id, e.target.value)}
-              style={styles.select}
-            >
-              {STATUS_OPTIONS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Comment input */}
-          <div style={styles.commentForm}>
-            <input
-              type="text"
-              placeholder="Add a comment…"
-              value={commentInputs[idea._id] || ""}
-              onChange={(e) =>
-                handleCommentChange(idea._id, e.target.value)
-              }
-              style={styles.commentInput}
-            />
-            <button
-              onClick={() => handleAddComment(idea._id)}
-              style={styles.commentButton}
-            >
-              Comment
-            </button>
-          </div>
-
-          {/* Action buttons */}
-          <div style={styles.actionsRow}>
-            <button
-              onClick={() => handleLike(idea._id)}
-              style={styles.like}
-            >
-              👍 Like
-            </button>
 
             <button
               onClick={() => handleDelete(idea._id)}
@@ -211,9 +179,16 @@ function IdeaList({ refreshToken }) {
             >
               Delete
             </button>
+
+            <button
+              onClick={() => handleLike(idea._id)}
+              style={styles.like}
+            >
+              👍 Like
+            </button>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -236,25 +211,20 @@ const styles = {
     fontSize: 14,
     color: "#555",
   },
-  statusRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 8,
-    gap: 8,
-  },
   select: {
     padding: 4,
     borderRadius: 4,
     border: "1px solid #ccc",
     fontSize: 14,
   },
-  actionsRow: {
+  statusRow: {
+    marginTop: 10,
     display: "flex",
-    gap: 8,
-    marginTop: 8,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   delete: {
+    marginTop: 8,
     padding: "6px 10px",
     borderRadius: 4,
     border: "none",
@@ -263,16 +233,27 @@ const styles = {
     cursor: "pointer",
   },
   like: {
+    marginTop: 8,
     padding: "6px 10px",
     borderRadius: 4,
     border: "none",
     backgroundColor: "#2563eb",
     color: "white",
     cursor: "pointer",
+    marginLeft: 8,
   },
   center: {
     textAlign: "center",
     marginTop: 20,
+  },
+  toolbar: {
+    padding: 10,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    background: "#f5f5f5",
+    borderRadius: 6,
+    margin: "10px 20px",
   },
   commentsBox: {
     marginTop: 10,
@@ -292,33 +273,12 @@ const styles = {
   },
   commentText: {
     fontSize: 14,
-    color: "#333",
     marginTop: 2,
   },
   commentDate: {
     fontSize: 12,
     color: "#777",
     marginTop: 4,
-  },
-  commentForm: {
-    display: "flex",
-    gap: 8,
-    marginTop: 10,
-  },
-  commentInput: {
-    flex: 1,
-    padding: 6,
-    borderRadius: 4,
-    border: "1px solid #ccc",
-    fontSize: 14,
-  },
-  commentButton: {
-    padding: "6px 12px",
-    borderRadius: 4,
-    border: "none",
-    backgroundColor: "#16a34a",
-    color: "white",
-    cursor: "pointer",
   },
 };
 
