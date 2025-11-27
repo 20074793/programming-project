@@ -77,6 +77,19 @@ function IdeaList({ refreshToken }) {
       alert("Failed to like idea.");
     }
   };
+  // === DASHBOARD ANALYTICS ===
+  const totalIdeas = ideas.length;
+
+  const totalLikes = ideas.reduce(
+    (sum, idea) => sum + (idea.likes || 0),
+    0
+  );
+
+  const statusCounts = ideas.reduce((acc, idea) => {
+    const key = idea.status || "unknown";
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
 
   // SORT LOGIC
   const sortedIdeas = [...ideas].sort((a, b) => {
@@ -92,7 +105,25 @@ function IdeaList({ refreshToken }) {
   if (ideas.length === 0) return <p style={styles.center}>No ideas yet.</p>;
 
   return (
+
+    
     <div>
+      {/* Simple dashboard analytics */}
+      <div style={{ padding: "10px 20px" }}>
+        <h3>Dashboard Analytics</h3>
+        <div>Total Ideas: {totalIdeas}</div>
+        <div>Total Likes: {totalLikes}</div>
+      </div>
+
+        <div style={{ marginTop: 10 }}>
+          <strong>By Status:</strong>
+          {Object.entries(statusCounts).map(([status, count]) => (
+            <div key={status}>
+              {status}: {count}
+            </div>
+          ))}
+        </div>
+
 
       {/* SORT BAR */}
       <div style={styles.toolbar}>
