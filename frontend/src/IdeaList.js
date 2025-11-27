@@ -22,6 +22,8 @@ function IdeaList({ refreshToken }) {
   const [error, setError] = useState("");
   const [sortOption, setSortOption] = useState("newest");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
 
 
   // Load ideas
@@ -159,8 +161,21 @@ function IdeaList({ refreshToken }) {
           style={styles.searchInput}
         />
 
-        <span style={styles.meta}>Sort by: </span>
+        <span style={styles.meta}>Status:</span>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          style={styles.select}
+        >
+          <option value="all">All</option>
+          {STATUS_OPTIONS.map((status) => (
+            <option key={status} value={status}>
+              {status.replace("_", " ")}
+            </option>
+          ))}
+        </select>
 
+        <span style={styles.meta}>Sort by:</span>
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
