@@ -108,22 +108,28 @@ function IdeaList({ refreshToken }) {
 
     
     <div>
-      {/* Simple dashboard analytics */}
-      <div style={{ padding: "10px 20px" }}>
-        <h3>Dashboard Analytics</h3>
-        <div>Total Ideas: {totalIdeas}</div>
-        <div>Total Likes: {totalLikes}</div>
-      </div>
 
-        <div style={{ marginTop: 10 }}>
-          <strong>By Status:</strong>
+      <div style={styles.analyticsWrapper}>
+        <div style={styles.analyticsCard}>
+          <h4 style={styles.analyticsTitle}>Total Ideas</h4>
+          <p style={styles.analyticsNumber}>{totalIdeas}</p>
+        </div>
+
+        <div style={styles.analyticsCard}>
+          <h4 style={styles.analyticsTitle}>Total Likes</h4>
+          <p style={styles.analyticsNumber}>{totalLikes}</p>
+        </div>
+
+        <div style={styles.analyticsCard}>
+          <h4 style={styles.analyticsTitle}>By Status</h4>
           {Object.entries(statusCounts).map(([status, count]) => (
-            <div key={status}>
-              {status}: {count}
+            <div style={styles.analyticsRow} key={status}>
+              <span>{status}</span>
+              <span>{count}</span>
             </div>
           ))}
         </div>
-
+      </div>
 
       {/* SORT BAR */}
       <div style={styles.toolbar}>
@@ -311,6 +317,37 @@ const styles = {
     color: "#777",
     marginTop: 4,
   },
+
+    analyticsWrapper: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+    gap: 12,
+    padding: "10px 20px",
+    marginTop: 10,
+  },
+  analyticsCard: {
+    background: "#111827",
+    color: "white",
+    padding: 12,
+    borderRadius: 8,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+  },
+  analyticsTitle: {
+    fontSize: 14,
+    marginBottom: 4,
+    opacity: 0.9,
+  },
+  analyticsNumber: {
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  analyticsRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: 13,
+    marginTop: 2,
+  },
+
 };
 
 export default IdeaList;
