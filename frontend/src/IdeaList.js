@@ -21,6 +21,8 @@ function IdeaList({ refreshToken }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sortOption, setSortOption] = useState("newest");
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   // Load ideas
   const loadIdeas = async () => {
@@ -132,7 +134,16 @@ function IdeaList({ refreshToken }) {
       </div>
 
       {/* SORT BAR */}
+
       <div style={styles.toolbar}>
+        <input
+          type="text"
+          placeholder="Search ideas..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={styles.searchInput}
+        />
+
         <span style={styles.meta}>Sort by: </span>
 
         <select
@@ -144,6 +155,7 @@ function IdeaList({ refreshToken }) {
           <option value="likes">Most liked</option>
         </select>
       </div>
+
 
       {/* IDEA LIST */}
       <div style={styles.list}>
@@ -347,6 +359,14 @@ const styles = {
     fontSize: 13,
     marginTop: 2,
   },
+    searchInput: {
+    flex: 1,
+    padding: 6,
+    borderRadius: 4,
+    border: "1px solid #ccc",
+    fontSize: 14,
+  },
+
 
 };
 
