@@ -94,7 +94,7 @@ function IdeaList({ refreshToken }) {
   }, {});
 
   // SORT LOGIC
-  
+
   // Filter ideas based on search term
   const filteredIdeas = ideas.filter((idea) => {
     if (!searchTerm.trim()) return true;
@@ -114,10 +114,6 @@ function IdeaList({ refreshToken }) {
     if (sortOption === "likes") {
       return (b.likes || 0) - (a.likes || 0);
     }
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
-
-    // newest first
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
