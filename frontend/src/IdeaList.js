@@ -24,7 +24,12 @@ function IdeaList({ refreshToken }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterDepartment, setFilterDepartment] = useState("all");
-
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    department: "",
+  });
 
 
 
@@ -83,6 +88,28 @@ function IdeaList({ refreshToken }) {
       alert("Failed to like idea.");
     }
   };
+
+    const startEdit = (idea) => {
+    setEditingId(idea._id);
+    setEditForm({
+      title: idea.title || "",
+      description: idea.description || "",
+      department: idea.department || "",
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({ title: "", description: "", department: "" });
+  };
+
+  const handleEditChange = (field, value) => {
+    setEditForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   // === DASHBOARD ANALYTICS ===
   const totalIdeas = ideas.length;
 
