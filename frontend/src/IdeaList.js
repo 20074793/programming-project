@@ -264,12 +264,42 @@ function IdeaList({ refreshToken }) {
       <div style={styles.list}>
         {sortedIdeas.map((idea) => (
           <div key={idea._id} style={styles.card}>
-            <h3>{idea.title}</h3>
-            <p>{idea.description}</p>
-
-            <p style={styles.meta}>
-              Department: <strong>{idea.department}</strong>
-            </p>
+          {editingId === idea._id ? (
+            <>
+              <input
+                type="text"
+                value={editForm.title}
+                onChange={(e) => handleEditChange("title", e.target.value)}
+                style={styles.input}
+                placeholder="Title"
+              />
+              <textarea
+                value={editForm.description}
+                onChange={(e) =>
+                  handleEditChange("description", e.target.value)
+                }
+                style={styles.textarea}
+                placeholder="Description"
+              />
+              <input
+                type="text"
+                value={editForm.department}
+                onChange={(e) =>
+                  handleEditChange("department", e.target.value)
+                }
+                style={styles.input}
+                placeholder="Department"
+              />
+            </>
+          ) : (
+            <>
+              <h3>{idea.title}</h3>
+              <p>{idea.description}</p>
+              <p style={styles.meta}>
+                Department: <strong>{idea.department}</strong>
+              </p>
+            </>
+          )}
 
             <p style={styles.meta}>
               Submitted by:{" "}
@@ -505,6 +535,23 @@ const styles = {
     cursor: "pointer",
   },
 
+  input: {
+    width: "100%",
+    padding: 6,
+    marginBottom: 6,
+    borderRadius: 4,
+    border: "1px solid #ccc",
+    fontSize: 14,
+  },
+  textarea: {
+    width: "100%",
+    padding: 6,
+    marginBottom: 6,
+    borderRadius: 4,
+    border: "1px solid #ccc",
+    fontSize: 14,
+    minHeight: 60,
+  },
 
 };
 
