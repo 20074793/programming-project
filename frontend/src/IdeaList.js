@@ -3,7 +3,8 @@ import {
   getIdeas, 
   deleteIdea, 
   updateIdeaStatus, 
-  likeIdea 
+  likeIdea,
+  updateIdea,
 } from "./api";
 
 // Status dropdown options
@@ -73,6 +74,29 @@ function IdeaList({ refreshToken }) {
     } catch (err) {
       console.error(err);
       alert("Failed to update status.");
+    }
+  };
+
+  //
+  const handleSaveEdit = async () => {
+    if (!editingId) return;
+
+    try {
+      const updated = await updateIdea(editingId, {
+        title: editForm.title,
+        description: editForm.description,
+        department: editForm.department,
+      });
+
+      setIdeas((prev) =>
+        prev.map((idea) => (idea._id === editingId ? updated : idea))
+      );
+
+      setEditingId(null);
+      setEditForm({ title: "", description: "", department: "" });
+    } catch (err) {
+      console.error("Failed to update idea:", err);
+      alert("Failed to save changes.");
     }
   };
 
@@ -364,14 +388,20 @@ function IdeaList({ refreshToken }) {
               </button>
 
               {editingId === idea._id ? (
-                <button onClick={cancelEdit} style={styles.cancel}>
-                  Cancel
-                </button>
+                <>
+                  <button onClick={handleSaveEdit} style={styles.save}>
+                    Save
+                  </button>
+                  <button onClick={cancelEdit} style={styles.cancel}>
+                    Cancel
+                  </button>
+                </>
               ) : (
                 <button onClick={() => startEdit(idea)} style={styles.edit}>
                   Edit
                 </button>
               )}
+
 
               <button
                 onClick={() => handleDelete(idea._id)}
@@ -551,6 +581,15 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: 14,
     minHeight: 60,
+  },
+
+    save: {
+    padding: "6px 10px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#16a34a",
+    color: "white",
+    cursor: "pointer",
   },
 
 };
