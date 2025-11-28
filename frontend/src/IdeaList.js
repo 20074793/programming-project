@@ -325,19 +325,32 @@ function IdeaList({ refreshToken }) {
               </select>
             </div>
 
-            <button
-              onClick={() => handleDelete(idea._id)}
-              style={styles.delete}
-            >
-              Delete
-            </button>
+            <div style={styles.actionsRow}>
+              <button
+                onClick={() => handleLike(idea._id)}
+                style={styles.like}
+              >
+                👍 Like
+              </button>
 
-            <button
-              onClick={() => handleLike(idea._id)}
-              style={styles.like}
-            >
-              👍 Like
-            </button>
+              {editingId === idea._id ? (
+                <button onClick={cancelEdit} style={styles.cancel}>
+                  Cancel
+                </button>
+              ) : (
+                <button onClick={() => startEdit(idea)} style={styles.edit}>
+                  Edit
+                </button>
+              )}
+
+              <button
+                onClick={() => handleDelete(idea._id)}
+                style={styles.delete}
+              >
+                Delete
+              </button>
+            </div>
+
           </div>
         ))}
       </div>
@@ -468,6 +481,28 @@ const styles = {
     borderRadius: 4,
     border: "1px solid #ccc",
     fontSize: 14,
+  },
+  actionsRow: {
+    marginTop: 8,
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  edit: {
+    padding: "6px 10px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#f59e0b",
+    color: "white",
+    cursor: "pointer",
+  },
+  cancel: {
+    padding: "6px 10px",
+    borderRadius: 4,
+    border: "none",
+    backgroundColor: "#6b7280",
+    color: "white",
+    cursor: "pointer",
   },
 
 
