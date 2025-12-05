@@ -17,6 +17,13 @@ function App() {
       return null;
     }
   });
+  
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setCurrentUser(null);
+    setToken("");
+  };
 
   const [token, setToken] = useState(() => {
     try {
