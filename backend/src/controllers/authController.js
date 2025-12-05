@@ -102,3 +102,12 @@ exports.login = async (req, res) => {
   }
 };
 
+// GET /api/auth/me
+// For now this is a placeholder; we'll protect it with JWT middleware later.
+exports.getMe = (req, res) => {
+  res.json({
+    message: "Auth 'me' endpoint – will be secured with JWT middleware later",
+  });
+};
+
+
