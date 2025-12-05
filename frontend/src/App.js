@@ -7,7 +7,7 @@ import RegisterForm from "./RegisterForm";
 
 function App() {
   const [refreshToken, setRefreshToken] = useState(0);
-  
+
     // Auth state
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -26,6 +26,18 @@ function App() {
     }
   });
 
+  const handleAuthSuccess = (user, tokenValue) => {
+    setCurrentUser(user);
+    setToken(tokenValue);
+
+    // store in localStorage for next refresh
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", tokenValue);
+
+    // optional: trigger ideas reload
+    setRefreshToken((prev) => prev + 1);
+  };
+
   // Which form to show when not logged in: "login" or "register"
   const [authMode, setAuthMode] = useState("login");
 
@@ -36,6 +48,42 @@ function App() {
   };
 
   return (
+  <div>
+    {!currentUser ? (
+      // NOT LOGGED IN → show auth forms
+      <div style={{ maxWidth: 500, margin: "40px auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 16 }}>
+          <button
+            onClick={() => setAuthMode("login")}
+            disabled={authMode === "login"}
+            style={{ marginRight: 8 }}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setAuthMode("register")}
+            disabled={authMode === "register"}
+          >
+            Register
+          </button>
+        </div>
+
+        {authMode === "login" ? (
+          <LoginForm onLogin={handleAuthSuccess} />
+        ) : (
+          <RegisterForm onRegister={handleAuthSuccess} />
+        )}
+      </div>
+    ) : (
+      // LOGGED IN → show your existing dashboard
+      <>
+        <header style={{ padding: 16 }}>
+          <p>
+            Logged in as <strong>{currentUser.name}</strong> (
+            {currentUser.role})
+          </p>
+        </header>
+
     <div style={styles.page}>
       <header style={styles.header}>
         <h1>Innovation Suggestion Tracker</h1>
@@ -45,7 +93,11 @@ function App() {
       <IdeaForm onCreated={handleIdeaCreated} />
       <IdeaList refreshToken={refreshToken} />
     </div>
-  );
+      </>
+    )}
+  </div>
+);
+
 }
 
 const styles = {
