@@ -91,7 +91,10 @@ function App() {
       </header>
 
       <IdeaForm onCreated={handleIdeaCreated} />
-      <IdeaList refreshToken={refreshToken} />
+      <IdeaList
+  refreshToken={refreshToken}
+  currentUser={currentUser}
+/>
     </div>
       </>
     )}
