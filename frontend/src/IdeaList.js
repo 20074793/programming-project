@@ -17,7 +17,7 @@ const STATUS_OPTIONS = [
   "rejected",
 ];
 
-function IdeaList({ refreshToken }) {
+function IdeaList({ refreshToken, currentUser }) {
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
