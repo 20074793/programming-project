@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import IdeaForm from "./IdeaForm";
 import IdeaList from "./IdeaList";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
+
 
 function App() {
   const [refreshToken, setRefreshToken] = useState(0);
