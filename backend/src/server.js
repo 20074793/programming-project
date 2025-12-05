@@ -11,7 +11,9 @@ app.use(express.json());
 
 // Routes
 const ideaRoutes = require("./routes/ideaRoutes");
+const authRoutes = require("./routes/authRoutes");
 app.use("/api/ideas", ideaRoutes);
+app.use("/api/auth", authRoutes);
 
 // Test route
 app.get("/", (req, res) => {
