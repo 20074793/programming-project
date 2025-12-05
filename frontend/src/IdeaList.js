@@ -407,12 +407,15 @@ function IdeaList({ refreshToken, currentUser }) {
               )}
 
 
-              <button
-                onClick={() => handleDelete(idea._id)}
-                style={styles.delete}
-              >
+              {currentUser?.role === "approver" && (
+             <button
+              onClick={() => handleDelete(idea._id)}
+               style={styles.delete}
+               >
                 Delete
-              </button>
+             </button>
+)}
+
             </div>
 
           </div>
