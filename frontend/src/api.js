@@ -41,3 +41,17 @@ export const addComment = async (id, commentData) => {
   const res = await axios.post(`/api/ideas/${id}/comments`, commentData);
   return res.data;
 };
+
+// --- Auth APIs ---
+
+// Register a new user
+export const registerUser = async (data) => {
+  const res = await axios.post("/api/auth/register", data);
+  return res.data;
+};
+
+// Login existing user
+export const loginUser = async (data) => {
+  const res = await axios.post("/api/auth/login", data);
+  return res.data;
+};
