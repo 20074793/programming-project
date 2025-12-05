@@ -84,12 +84,31 @@ function App() {
     ) : (
       // LOGGED IN → show your existing dashboard
       <>
-        <header style={{ padding: 16 }}>
-          <p>
-            Logged in as <strong>{currentUser.name}</strong> (
-            {currentUser.role})
-          </p>
-        </header>
+   <header style={{ 
+  padding: 16, 
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center"
+}}>
+  <p>
+    Logged in as <strong>{currentUser.name}</strong> ({currentUser.role})
+  </p>
+
+  <button 
+    onClick={handleLogout}
+    style={{
+      padding: "6px 12px",
+      borderRadius: 4,
+      border: "none",
+      backgroundColor: "#dc2626",
+      color: "white",
+      cursor: "pointer"
+    }}
+  >
+    Logout
+  </button>
+</header>
+
 
     <div style={styles.page}>
       <header style={styles.header}>
