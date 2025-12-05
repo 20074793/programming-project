@@ -362,22 +362,26 @@ function IdeaList({ refreshToken, currentUser }) {
 
             {/* STATUS + ACTIONS */}
             <div style={styles.statusRow}>
-              <span style={styles.meta}>
-                Status: <strong>{idea.status}</strong>
-              </span>
+             <span style={styles.meta}>
+                 Status: <strong>{idea.status}</strong>
+             </span>
 
+               {currentUser?.role === "approver" && (
               <select
-                value={idea.status}
-                onChange={(e) => handleStatusChange(idea._id, e.target.value)}
-                style={styles.select}
-              >
-                {STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
+                 value={idea.status}
+                  onChange={(e) =>
+                   handleStatusChange(idea._id, e.target.value)
+                   }
+                  style={styles.select}
+                   >
+                 {STATUS_OPTIONS.map((s) => (
+                   <option key={s} value={s}>
+                 {s}
+                </option>
+                  ))}
+                 </select>
+                 )}
+              </div>
 
             <div style={styles.actionsRow}>
               <button
