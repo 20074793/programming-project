@@ -87,6 +87,8 @@ const [filterStatus, setFilterStatus] = useState("all");
       </div>
     ) : (
       // LOGGED IN → show your existing dashboard
+
+      
       <>
    <header style={{ 
   padding: 16, 
@@ -130,6 +132,46 @@ const [filterStatus, setFilterStatus] = useState("all");
     )}
   </div>
 );
+  <div>
+
+    {/* 🔍 FILTER TOOLBAR */}
+    <div style={{ display: "flex", gap: 16, padding: 16 }}>
+      {/* Department Filter */}
+      <select
+        value={filterDepartment}
+        onChange={(e) => setFilterDepartment(e.target.value)}
+      >
+        <option value="all">All Departments</option>
+        <option value="IT">IT</option>
+        <option value="HR">HR</option>
+        <option value="Finance">Finance</option>
+        <option value="Sales">Sales</option>
+      </select>
+
+      {/* Status Filter */}
+      <select
+        value={filterStatus}
+        onChange={(e) => setFilterStatus(e.target.value)}
+      >
+        <option value="all">All Status</option>
+        <option value="submitted">Submitted</option>
+        <option value="in_review">In Review</option>
+        <option value="approved">Approved</option>
+        <option value="in_progress">In Progress</option>
+        <option value="implemented">Implemented</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+
+    {/* Show idea list */}
+    <IdeaList
+      refreshToken={refreshToken}
+      currentUser={currentUser}
+      filterDepartment={filterDepartment}
+      filterStatus={filterStatus}
+    />
+
+  </div>
 
 }
 
