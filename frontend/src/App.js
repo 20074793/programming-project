@@ -18,6 +18,10 @@ function App() {
     }
   });
   
+  // Filters
+const [filterDepartment, setFilterDepartment] = useState("all");
+const [filterStatus, setFilterStatus] = useState("all");
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
