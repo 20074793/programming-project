@@ -160,6 +160,10 @@ function IdeaList({ refreshToken, currentUser }) {
     if (filterStatus !== "all" && idea.status !== filterStatus) {
       return false;
     }
+// Department filter
+if (filterDepartment !== "all" && idea.department !== filterDepartment) {
+  return false;
+}
 
     // Search filter
     if (!searchTerm.trim()) return true;
