@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import IdeaForm from "./IdeaForm";
-import IdeaList from "./IdeaList";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import EmployeeDashboard from "./EmployeeDashboard";
@@ -61,156 +59,61 @@ const [filterStatus, setFilterStatus] = useState("all");
     setRefreshToken((prev) => prev + 1);
   };
 
-  return (
-  <div>
-    {!currentUser ? (
-      // NOT LOGGED IN → show auth forms
-      <div style={{ maxWidth: 500, margin: "40px auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <button
-            onClick={() => setAuthMode("login")}
-            disabled={authMode === "login"}
-            style={{ marginRight: 8 }}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setAuthMode("register")}
-            disabled={authMode === "register"}
-          >
-            Register
-          </button>
+   return (
+    <div>
+      {!currentUser ? (
+        // NOT LOGGED IN → show auth forms
+        <div style={{ maxWidth: 500, margin: "40px auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <button
+              onClick={() => setAuthMode("login")}
+              disabled={authMode === "login"}
+              style={{ marginRight: 8 }}
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setAuthMode("register")}
+              disabled={authMode === "register"}
+            >
+              Register
+            </button>
+          </div>
+
+          {authMode === "login" ? (
+            <LoginForm onLogin={handleAuthSuccess} />
+          ) : (
+            <RegisterForm onRegister={handleAuthSuccess} />
+          )}
         </div>
-
-        {authMode === "login" ? (
-          <LoginForm onLogin={handleAuthSuccess} />
-        ) : (
-          <RegisterForm onRegister={handleAuthSuccess} />
-        )}
-      </div>
-    ) : (
-      // LOGGED IN → show your existing dashboard
-      <>
-      {currentUser.role === "approver" ? (
-          <ApproverDashboard
-            currentUser={currentUser}
-            onLogout={handleLogout}
-            refreshToken={refreshToken}
-            filterDepartment={filterDepartment}
-            setFilterDepartment={setFilterDepartment}
-            filterStatus={filterStatus}
-            setFilterStatus={setFilterStatus}
-          />
-        ) : (
-          <EmployeeDashboard
-            currentUser={currentUser}
-            onLogout={handleLogout}
-            refreshToken={refreshToken}
-            onIdeaCreated={handleIdeaCreated}
-            filterDepartment={filterDepartment}
-            setFilterDepartment={setFilterDepartment}
-            filterStatus={filterStatus}
-            setFilterStatus={setFilterStatus}
-          />
-        )}
-    
-   <header style={{ 
-  padding: 16, 
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center"
-}}>
-  <p>
-    Logged in as <strong>{currentUser.name}</strong> ({currentUser.role})
-  </p>
-
-  <button 
-    onClick={handleLogout}
-    style={{
-      padding: "6px 12px",
-      borderRadius: 4,
-      border: "none",
-      backgroundColor: "#dc2626",
-      color: "white",
-      cursor: "pointer"
-    }}
-  >
-    Logout
-  </button>
-</header>
-
-
-    <div style={styles.page}>
-      <header style={styles.header}>
-        <h1>Innovation Suggestion Tracker</h1>
-        <p>Submit and track ideas inside the company.</p>
-      </header>
-
-      <IdeaForm onCreated={handleIdeaCreated} />
-      <IdeaList
-  refreshToken={refreshToken}
-  currentUser={currentUser}
-/>
+      ) : currentUser.role === "approver" ? (
+        // APPROVER DASHBOARD
+        <ApproverDashboard
+          currentUser={currentUser}
+          token={token}
+          onLogout={handleLogout}
+          refreshToken={refreshToken}
+          filterDepartment={filterDepartment}
+          setFilterDepartment={setFilterDepartment}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+        />
+      ) : (
+        // EMPLOYEE DASHBOARD
+        <EmployeeDashboard
+          currentUser={currentUser}
+          token={token}
+          onLogout={handleLogout}
+          refreshToken={refreshToken}
+          onIdeaCreated={handleIdeaCreated}
+          filterDepartment={filterDepartment}
+          setFilterDepartment={setFilterDepartment}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+        />
+      )}
     </div>
-      </>
-    )}
-
-
-    {/* 🔍 FILTER TOOLBAR */}
-    <div style={{ display: "flex", gap: 16, padding: 16 }}>
-      {/* Department Filter */}
-      <select
-        value={filterDepartment}
-        onChange={(e) => setFilterDepartment(e.target.value)}
-      >
-        <option value="all">All Departments</option>
-        <option value="IT">IT</option>
-        <option value="HR">HR</option>
-        <option value="Finance">Finance</option>
-        <option value="Sales">Sales</option>
-      </select>
-
-      {/* Status Filter */}
-      <select
-        value={filterStatus}
-        onChange={(e) => setFilterStatus(e.target.value)}
-      >
-        <option value="all">All Status</option>
-        <option value="submitted">Submitted</option>
-        <option value="in_review">In Review</option>
-        <option value="approved">Approved</option>
-        <option value="in_progress">In Progress</option>
-        <option value="implemented">Implemented</option>
-        <option value="rejected">Rejected</option>
-      </select>
-    </div>
-
-    {/* Show idea list */}
-    <IdeaList
-      refreshToken={refreshToken}
-      currentUser={currentUser}
-      filterDepartment={filterDepartment}
-      filterStatus={filterStatus}
-    />
-
-  </div>
- 
-);
-  
+  );
 }
-
-const styles = {
-  page: {
-    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-    backgroundColor: "#f3f4f6",
-    minHeight: "100vh",
-  },
-  header: {
-    padding: 20,
-    textAlign: "center",
-    backgroundColor: "#111827",
-    color: "white",
-  },
-};
 
 export default App;
