@@ -65,7 +65,19 @@ function ApproverDashboard({
         <p>Review, approve, or reject submitted ideas.</p>
       </header>
 
-      {/* Filters */}
+      <div style={{ display: "flex", gap: 8, padding: "0 16px 8px" }}>
+  <button onClick={() => setFilterStatus("submitted")}>Submitted</button>
+  <button onClick={() => setFilterStatus("in_review")}>In Review</button>
+  <button
+    onClick={() => {
+      setFilterDepartment("all");
+      setFilterStatus("all");
+    }}
+  >
+    Reset
+  </button>
+</div>
+
       <div style={{ display: "flex", gap: 16, padding: 16 }}>
         <select
           value={filterDepartment}
