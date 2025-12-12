@@ -3,6 +3,9 @@ import IdeaForm from "./IdeaForm";
 import IdeaList from "./IdeaList";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import EmployeeDashboard from "./EmployeeDashboard";
+import ApproverDashboard from "./ApproverDashboard";
+
 
 
 function App() {
@@ -87,9 +90,14 @@ const [filterStatus, setFilterStatus] = useState("all");
       </div>
     ) : (
       // LOGGED IN → show your existing dashboard
-
-      
       <>
+ {user.role === "admin" ? (
+  <AdminDashboard />
+) : (
+  <UserDashboard />
+)}
+
+    
    <header style={{ 
   padding: 16, 
   display: "flex",
@@ -130,9 +138,7 @@ const [filterStatus, setFilterStatus] = useState("all");
     </div>
       </>
     )}
-  </div>
-);
-  <div>
+
 
     {/* 🔍 FILTER TOOLBAR */}
     <div style={{ display: "flex", gap: 16, padding: 16 }}>
@@ -172,7 +178,9 @@ const [filterStatus, setFilterStatus] = useState("all");
     />
 
   </div>
-
+ 
+);
+  
 }
 
 const styles = {
