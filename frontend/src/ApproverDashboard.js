@@ -2,6 +2,8 @@
 
 import React from "react";
 import IdeaList from "./IdeaList";
+import React, { useEffect } from "react";
+
 
 function ApproverDashboard({
   currentUser,
@@ -11,7 +13,15 @@ function ApproverDashboard({
   setFilterDepartment,
   filterStatus,
   setFilterStatus,
+  
 }) {
+      // Approver default view: start from "submitted" ideas
+  useEffect(() => {
+    if (filterStatus === "all") {
+      setFilterStatus("submitted");
+    }
+  }, [filterStatus, setFilterStatus]);
+
   return (
     <>
       {/* Top bar */}
