@@ -25,7 +25,7 @@ exports.requireAuth = (req, res, next) => {
     console.error("Auth error:", err);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
-
+}
 // Ensure current user has approver role
 exports.requireApprover = (req, res, next) => {
   if (!req.user || req.user.role !== "approver") {
@@ -34,4 +34,4 @@ exports.requireApprover = (req, res, next) => {
   next();
 };
 
-};
+
