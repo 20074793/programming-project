@@ -64,7 +64,19 @@ function ApproverDashboard({
         <h1>Approver Dashboard</h1>
         <p>Review, approve, or reject submitted ideas.</p>
       </header>
-
+      <div
+        style={{
+          margin: "16px",
+          padding: "12px 16px",
+          backgroundColor: "#fff7ed",
+          border: "1px solid #fed7aa",
+          borderRadius: 8,
+        }}
+      >
+        <strong>Tip:</strong> Focus on <em>Submitted</em> and{" "}
+        <em>In Review</em> ideas to approve or reject quickly.
+      </div>
+      
       <div style={{ display: "flex", gap: 8, padding: "0 16px 8px" }}>
   <button onClick={() => setFilterStatus("submitted")}>Submitted</button>
   <button onClick={() => setFilterStatus("in_review")}>In Review</button>
