@@ -1,8 +1,7 @@
 // ApproverDashboard.js
 
-import React from "react";
 import IdeaList from "./IdeaList";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 function ApproverDashboard({
@@ -76,45 +75,7 @@ function ApproverDashboard({
         <strong>Tip:</strong> Focus on <em>Submitted</em> and{" "}
         <em>In Review</em> ideas to approve or reject quickly.
       </div>
-      
-      <div style={{ display: "flex", gap: 8, padding: "0 16px 8px" }}>
-  <button onClick={() => setFilterStatus("submitted")}>Submitted</button>
-  <button onClick={() => setFilterStatus("in_review")}>In Review</button>
-  <button
-    onClick={() => {
-      setFilterDepartment("all");
-      setFilterStatus("all");
-    }}
-  >
-    Reset
-  </button>
-</div>
 
-      <div style={{ display: "flex", gap: 16, padding: 16 }}>
-        <select
-          value={filterDepartment}
-          onChange={(e) => setFilterDepartment(e.target.value)}
-        >
-          <option value="all">All Departments</option>
-          <option value="IT">IT</option>
-          <option value="HR">HR</option>
-          <option value="Finance">Finance</option>
-          <option value="Sales">Sales</option>
-        </select>
-
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-        >
-          <option value="all">All Status</option>
-          <option value="submitted">Submitted</option>
-          <option value="in_review">In Review</option>
-          <option value="approved">Approved</option>
-          <option value="in_progress">In Progress</option>
-          <option value="implemented">Implemented</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
 
       {/* Idea list */}
       <IdeaList

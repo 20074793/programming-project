@@ -55,32 +55,7 @@ function EmployeeDashboard({
         <p>Submit ideas and collaborate with your team.</p>
       </header>
 
-      {/* Filters */}
-      <div style={{ display: "flex", gap: 16, padding: 16 }}>
-        <select
-          value={filterDepartment}
-          onChange={(e) => setFilterDepartment(e.target.value)}
-        >
-          <option value="all">All Departments</option>
-          <option value="IT">IT</option>
-          <option value="HR">HR</option>
-          <option value="Finance">Finance</option>
-          <option value="Sales">Sales</option>
-        </select>
 
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-        >
-          <option value="all">All Status</option>
-          <option value="submitted">Submitted</option>
-          <option value="in_review">In Review</option>
-          <option value="approved">Approved</option>
-          <option value="in_progress">In Progress</option>
-          <option value="implemented">Implemented</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
 
       {/* Employee can submit ideas */}
       <IdeaForm onCreated={onIdeaCreated} />
