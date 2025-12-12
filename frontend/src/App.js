@@ -91,12 +91,28 @@ const [filterStatus, setFilterStatus] = useState("all");
     ) : (
       // LOGGED IN → show your existing dashboard
       <>
- {user.role === "admin" ? (
-  <AdminDashboard />
-) : (
-  <UserDashboard />
-)}
-
+      {currentUser.role === "approver" ? (
+          <ApproverDashboard
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            refreshToken={refreshToken}
+            filterDepartment={filterDepartment}
+            setFilterDepartment={setFilterDepartment}
+            filterStatus={filterStatus}
+            setFilterStatus={setFilterStatus}
+          />
+        ) : (
+          <EmployeeDashboard
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            refreshToken={refreshToken}
+            onIdeaCreated={handleIdeaCreated}
+            filterDepartment={filterDepartment}
+            setFilterDepartment={setFilterDepartment}
+            filterStatus={filterStatus}
+            setFilterStatus={setFilterStatus}
+          />
+        )}
     
    <header style={{ 
   padding: 16, 
